@@ -16,10 +16,23 @@ This has been turned into a package so that:
 I'm not going to bother putting this on the Typst package repository (at least
 not until they add themes as their own thing). Unfortunately, you can't
 `#import` from a Git URL yet; to install this package, follow [Typst's guide on
-local packages][package-install]. Also unfortunately, the requirement that a
-package live within a directory named after its version means that you can't
-even get away with cloning this repository into your packages folder. You'll
-have to download a fresh copy for ech version you want to use.
+local packages][package-install].
+
+The easiest way to install this package is probably to clone it into your
+`{data-dir}` (again, see Typst's guide). More specifically, you can clone a
+specific version without any extra history by setting the `--depth` flag to `1`
+and using `--branch` to target a tag on this repository.
+
+On Windows, Typst's `{data-dir}` is located in `%LOCALAPPDATA%`. So, in Git
+Bash, you might run:
+
+```bash
+VER="0.1.0"
+mkdir -p "${LOCALAPPDATA}/typst/packages/local/assignmatts"
+git clone git@github.com:matthew-e-brown/assignmatts.git \
+  --branch "v${VER}" \
+  --depth 1 "${LOCALAPPDATA}/typst/packages/local/assignmatts/${VER}"
+```
 
 
 [package-install]: https://github.com/typst/packages/?tab=readme-ov-file#local-packages
