@@ -27,7 +27,7 @@ On Windows, Typst's `{data-dir}` is located in `%LOCALAPPDATA%`. So, in Git
 Bash, you might run:
 
 ```bash
-VER="0.1.0"
+VER="0.1.1"
 mkdir -p "${LOCALAPPDATA}/typst/packages/local/assignmatts"
 git clone git@github.com:matthew-e-brown/assignmatts.git \
   --branch "v${VER}" \
