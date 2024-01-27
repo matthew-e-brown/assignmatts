@@ -1,8 +1,11 @@
-#import "../src/lib.typ" as assignmatts: assignment
+#import "../src/lib.typ" as assignmatts
+
+#import assignmatts: assignment
+
 
 #show: assignment.with(
-    [Example Assignment],
-    [Matthew Brown],
+    title: [Example Assignment],
+    author: [Matthew Brown],
     course-code: [CODE-1234],
     course-name: [Assignmatts],
     pdf-author: "Matthew Brown",

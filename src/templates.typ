@@ -1,19 +1,39 @@
 /// General template for most written assignments.
 #let assignment(
-    title,
-    author,
+    /// The main title of the assignment. If it is not `none`, appears at the top of the first page
+    /// and in the top-right of the page header.
+    title: none,
+    /// The student/author name. Currently, multiple authors are not supported. Underneath the title
+    /// and in the top-left of the page header.
+    author: none,
+    /// The `ABCD-1234H` course code. Appears next to the course name above the title, as well as in
+    /// in the top-right of the page margins before the assignment title.
     course-code: none,
+    /// The full name of the course. Appears above the title on the first page.
     course-name: none,
-    pdf-title: auto,
+    /// The title to add to the PDF.
+    pdf-title: none,
+    /// The author(s) to add to the PDF.
     pdf-author: none,
+    /// Set to `true` to put the title on its own page.
     title-page: false,
-    table-of-contents: false,
+    /// Other content to include underneath the title on the title page. If `title-page` is `false`,
+    /// it is placed directly after the title with a bit of extra space before the rest of the
+    /// document starts.
+    title-page-other: none,
+    /// What page size to use.
     page-size: "us-letter",
+    /// How large to make the page margins.
     page-margins: 1in,
+    /// A font-stack to use for main body text.
     main-font: ("New Computer Modern", "Linux Libertine"),
+    /// A font-stack to use for equations.
     math-font: ("New Computer Modern Math"),
+    /// A font-stack to use for `raw` text elements.
     code-font: ("New Computer Modern Mono", "Cascadia Code", "Consolas", "SF Mono"),
+    /// The colour of the line that should separate footnotes from the rest of the document.
     footnotes-line-color: blue,
+    /// Whether or not each page should have its own set of numbers/symbols for footnotes.
     footnotes-per-page: false,
     doc
 ) = {
@@ -39,20 +59,6 @@
     set list(indent: 1.25em, spacing: par-spacing)
     set enum(indent: 1.25em, spacing: par-spacing)
 
-    // Remove the regular block spacing underneath that appears after tight lists. This joins them
-    // with the paragraphs that follow them.
-    let list-show-fn = it => {
-        // Also make any equations within them only be `par-leading` away (give or take) from the
-        // paragraph before them.
-        show math.equation: set block(spacing: par-leading)
-        it + v(par-leading, weak: true)
-        // (this is a temporary workaround: what would be preferred would be to only put block
-        // spacing _between_ two paragraphs, not _before and after every_ paragraph).
-    }
-
-    show list.where(tight: true): list-show-fn
-    show enum.where(tight: true): list-show-fn
-
     // Highlight links blue and underline them, but only if they're hyperlinks
     show link: it => {
         if type(it.dest) == str and (
@@ -72,7 +78,7 @@
     // =============================================================================================
 
     set document(
-        title: if pdf-title != auto { pdf-title } else [ #title ],
+        title: if pdf-title != auto { pdf-title } else if title != none [ #title ] else { none },
         author: if pdf-author != none { pdf-author } else { () },
     )
 
@@ -87,7 +93,9 @@
             counter(footnote).update(0)
         }
 
-        #author #h(1fr) #course-code: #title
+        #author
+        #h(1fr)
+        #(course-code, title).filter(x => x != none).join[: ]
     ]
 
     let footer-content = margin-block[
@@ -108,6 +116,8 @@
     // =============================================================================================
     // ==== Styles for individual elements
     // =============================================================================================
+
+    set outline(indent: 2.4em)
 
     // -- Footnotes
     // --------------------------------------------------------
@@ -150,7 +160,7 @@
     // ====                                   END OF PREAMBLE                                   ====
     // =============================================================================================
 
-    let title-block = {
+    let title-block = if title != none {
         set align(center)
         set par(leading: 1.15em)
         set text(1.15em)
@@ -162,17 +172,13 @@
             3.25em
         }
 
-        block(below: title-padding)[
-            #if course-code != none and course-name != none [
-                #course-code: #course-name \
-            ] else if course-code != none [
-                #course-code \
-            ] else if course-name != none [
-                #course-name \
-            ]
+        block(below: title-padding, [
+            #(course-code, course-name).filter(x => x != none).join[: ] \
             #text(2.00em, weight: 700, title) \
             #author
-        ]
+        ])
+    } else {
+        none
     }
 
     // If we have a title page, wrap the title block in it its own page with some different spacing
@@ -184,12 +190,12 @@
         ]
 
         page(numbering: "i", footer: footer, {
-            v(0.25fr)
-            title-block
-
-            if table-of-contents {
-                outline(indent: 2.4em)
+            if title-page != none {
+                v(0.25fr)
+                title-block
             }
+
+            title-page-other
 
             v(1.00fr)
         })
@@ -197,12 +203,13 @@
         counter(page).update(1)
     } else {
         // Fix for a "bug?" For some reason, the margin-blocks in the header and footer get shifted
-        // to the side
+        // to the side without this.
         v(0pt, weak: false)
 
         title-block
-        if table-of-contents {
-            outline(indent: 2.4em)
+
+        if title-page-other != none {
+            title-page-other
             v(par-spacing * 2, weak: true)
         }
     }
