@@ -5,7 +5,7 @@ description = """
 Matt's personal library of templates and helper functions for various undergraduate assignments.
 """
 licence = "MIT"
-repository = "https://github.com/matthew-e-brown/typst-assn-lib"
-version = "0.1.0"
+repository = "https://github.com/matthew-e-brown/assignmatts"
+version = "0.1.1"
 entrypoint = "src/lib.typ"
 exclude = ["./example"]
