@@ -23,16 +23,22 @@ The easiest way to install this package is probably to clone it into your
 specific version without any extra history by setting the `--depth` flag to `1`
 and using `--branch` to target a tag on this repository.
 
-On Windows, Typst's `{data-dir}` is located in `%LOCALAPPDATA%`. So, in Git
-Bash, you might run:
+On Windows, Typst's `{data-dir}` is located in `%LOCALAPPDATA%`.
+
+For convenience (as in, mostly for my own convenience), here's a Bash snippet
+that will install the latest version.
 
 ```bash
-VER="0.1.1"
-mkdir -p "${LOCALAPPDATA}/typst/packages/local/assignmatts"
-git clone git@github.com:matthew-e-brown/assignmatts.git \
-  --branch "v${VER}" \
-  --depth 1 "${LOCALAPPDATA}/typst/packages/local/assignmatts/${VER}"
+VER="$(curl -s https://api.github.com/repos/matthew-e-brown/assignmatts/releases/latest | jq -r '.tag_name')"
+DIR="${LOCALAPPDATA}/typst/packages/local/assignmatts"
+mkdir -p "$DIR" # will do nothing if already exists
+git clone git@github.com:matthew-e-brown/assignmatts.git --branch "$VER" --depth 1 "$DIR/${VER/v}"
+rm -rf "$DIR/${VER/v}/.git" # No need to keep it as a git repo
 ```
+
+This requires having [`jq`](https://jqlang.github.io/jq/) installed, of course.
+Just get it from `winget`. You can safely ignore the detached-HEAD warning from
+Git.
 
 
 [package-install]: https://github.com/typst/packages/?tab=readme-ov-file#local-packages
