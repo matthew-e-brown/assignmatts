@@ -17,10 +17,10 @@
     pdf-author: none,
     /// Set to `true` to put the title on its own page.
     title-page: false,
-    /// Other content to include underneath the title on the title page. If `title-page` is `false`,
-    /// it is placed directly after the title with a bit of extra space before the rest of the
-    /// document starts.
-    title-page-other: none,
+    /// Extra content to include underneath the title before the rest of the content. If
+    /// `title-page` is `false`, it is placed directly after the title with a bit of extra space
+    /// beneath it. If `title-page` is true, it is placed on the title page.
+    preamble: none,
     /// What page size to use.
     page-size: "us-letter",
     /// How large to make the page margins.
@@ -165,8 +165,8 @@
         set par(leading: 1.15em)
         set text(1.15em)
 
-        // If there's a title alone on its own title page, it doesn't need any padding below it.
-        let title-padding = if title-page and not table-of-contents {
+        // If there's a title alone on a title page, it doesn't need extra padding below it.
+        let title-padding = if title-page and preamble == none {
             0pt
         } else {
             3.25em
@@ -184,19 +184,16 @@
     // If we have a title page, wrap the title block in it its own page with some different spacing
     // first. Otherwise, just spit it out right away.
     if title-page {
+        // New footer just for this page
         let footer = margin-block[
             #set align(right)
             #counter(page).display("i.")
         ]
 
         page(numbering: "i", footer: footer, {
-            if title-page != none {
-                v(0.25fr)
-                title-block
-            }
-
-            title-page-other
-
+            v(0.25fr)
+            title-block
+            preamble
             v(1.00fr)
         })
 
@@ -208,8 +205,8 @@
 
         title-block
 
-        if title-page-other != none {
-            title-page-other
+        if preamble != none {
+            preamble
             v(par-spacing * 2, weak: true)
         }
     }
