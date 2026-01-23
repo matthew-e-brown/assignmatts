@@ -3,8 +3,8 @@
     /// The main title of the assignment. If it is not `none`, appears at the top of the first page
     /// and in the top-right of the page header.
     title: none,
-    /// The student/author name. Currently, multiple authors are not supported. Underneath the title
-    /// and in the top-left of the page header.
+    /// The student/author name. Appears underneath the title / and in the top-left of the page
+    /// header. Currently, multiple authors are not supported.
     author: none,
     /// The `ABCD-1234H` course code. Appears next to the course name above the title, as well as in
     /// in the top-right of the page margins before the assignment title.
@@ -26,15 +26,16 @@
     /// How large to make the page margins.
     page-margins: 1in,
     /// A font-stack to use for main body text.
-    main-font: ("New Computer Modern", "Linux Libertine"),
+    main-font: ("New Computer Modern"),
     /// A font-stack to use for equations.
     math-font: ("New Computer Modern Math"),
     /// A font-stack to use for `raw` text elements.
-    code-font: ("New Computer Modern Mono", "Cascadia Code", "Consolas", "SF Mono"),
+    code-font: ("DejaVu Sans Mono"),
     /// The colour of the line that should separate footnotes from the rest of the document.
     footnotes-line-color: blue,
     /// Whether or not each page should have its own set of numbers/symbols for footnotes.
     footnotes-per-page: false,
+    /// The body of the document.
     doc
 ) = {
     // A couple "private" defaults
@@ -83,9 +84,42 @@
     )
 
     // Creates a block that will extend horizontally outwards by half the page margins.
-    let margin-block(body) = {
+    let margin-block(body) = context {
+        /// Helper for finding the absolute value of the page's horizontal margins.
+        let margin-value(m) = if m == auto {
+            // https://typst.app/docs/reference/layout/page/#parameters-margin says that, if `auto`,
+            // "the margins are set automatically to 2.5/21 times the smaller dimension of the
+            // page."
+            calc.min(page.width, page.height) * 2.5 / 21
+        } else if type(m) == relative {
+            (page.width * m.ratio) + m.length
+        }
+
+        // We want the sides of our header/footer content to extend outwards an equal amount from
+        // the center of the document, specifically, half the page margins. In cases where the
+        // margins differ, we want to find the smaller of the two.
+        let margin-size = if type(page.margin) == dictionary {
+            // Left/right have precedence over inside/outside, and x is just a shorthand for setting
+            // left/right. If it's a dictionary, it should always have L/R *or* inside/outside.
+            if "left" in page.margin {
+                let l = margin-value(page.margin.left)
+                let r = margin-value(page.margin.right)
+                calc.min(l, r)
+            } else if "inside" in page.margin {
+                let i = margin-value(page.margin.inside)
+                let o = margin-value(page.margin.outside)
+                calc.min(i, o)
+            } else {
+                panic("page margins are in an unknown format")
+            }
+        } else {
+            // If it's not a dictionary, then it's either `auto` or a `relative`, which'd be the
+            // same for all four sides. Just use that value directly.
+            margin-value(page.margin)
+        }
+
         set text(size: 0.90em)
-        move(dx: -page-margins / 2, block(width: 100% + page-margins, body))
+        move(dx: -(margin-size / 2), block(width: 100% + margin-size, body))
     }
 
     let header-content = margin-block[
@@ -100,15 +134,15 @@
 
     let footer-content = margin-block[
         #set align(right)
-        #counter(page).display("p. 1/1", both: true)
+        #context counter(page).display(page.numbering, both: true)
     ]
 
     set page(
         paper: page-size,
-        numbering: "1",
+        numbering: "p. 1/1",
         margin: page-margins,
-        header-ascent: page-margins / 2,
-        footer-descent: page-margins / 2,
+        header-ascent: 50%,
+        footer-descent: 50%,
         header: header-content,
         footer: footer-content,
     )
@@ -122,11 +156,8 @@
     // -- Footnotes
     // --------------------------------------------------------
 
-    set footnote.entry(
-        gap: 0.5em,
-        clearance: 1em,
-        separator: line(length: 100%, stroke: (thickness: 0.75pt, paint: footnotes-line-color, cap: "round")),
-    )
+    let fn-stroke = (thickness: 0.75pt, paint: footnotes-line-color, cap: "round")
+    set footnote.entry(gap: 0.5em, clearance: 1em, separator: line(length: 100%, stroke: fn-stroke))
 
     show footnote.entry: it => {
         set par(justify: true)
@@ -184,13 +215,13 @@
     // If we have a title page, wrap the title block in it its own page with some different spacing
     // first. Otherwise, just spit it out right away.
     if title-page {
-        // New footer just for this page
+        // New footer just for this page.
         let footer = margin-block[
             #set align(right)
-            #counter(page).display("i.")
+            #context counter(page).display(page.numbering, both: false)
         ]
 
-        page(numbering: "i", footer: footer, {
+        page(numbering: "i.", footer: footer, {
             v(0.25fr)
             title-block
             preamble
@@ -199,10 +230,6 @@
 
         counter(page).update(1)
     } else {
-        // Fix for a "bug?" For some reason, the margin-blocks in the header and footer get shifted
-        // to the side without this.
-        v(0pt, weak: false)
-
         title-block
 
         if preamble != none {
