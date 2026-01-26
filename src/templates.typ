@@ -25,11 +25,11 @@
     page-size: "us-letter",
     /// How large to make the page margins.
     page-margins: 1in,
-    /// A font-stack to use for main body text.
+    /// The font-stack to use for main body text.
     main-font: ("New Computer Modern"),
-    /// A font-stack to use for equations.
+    /// The font-stack to use for equations.
     math-font: ("New Computer Modern Math"),
-    /// A font-stack to use for `raw` text elements.
+    /// The font-stack to use for `raw` text elements.
     code-font: ("DejaVu Sans Mono"),
     /// The colour of the line that should separate footnotes from the rest of the document.
     footnotes-line-color: blue,
@@ -51,14 +51,16 @@
     show math.equation: set text(font: math-font)
     show raw: set text(font: code-font)
 
+    show heading.where(level: 1): set text(size: 11pt * 1.2)
+    show heading.where(level: 2): set text(size: 11pt * 1.1)
+
     // Block spacing
     set block(spacing: par-spacing) // Default spacing for all blocks, can be overridden
     show heading: set block(above: 1.6em, below: 1.2em)
 
-    // Leading
-    set par(leading: par-leading, linebreaks: "optimized")
-    set list(indent: 1.25em, spacing: par-spacing)
-    set enum(indent: 1.25em, spacing: par-spacing)
+    set par(leading: par-leading, spacing: par-spacing, linebreaks: "optimized")
+    set list(indent: 1.25em)
+    set enum(indent: 1.25em)
 
     // Highlight links blue and underline them, but only if they're hyperlinks
     show link: it => {
