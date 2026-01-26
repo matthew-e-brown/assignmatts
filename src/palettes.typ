@@ -1,17 +1,17 @@
-// cspell:ignoreRegExp /rgb\("[A-Fa-f0-9]{6}"\)/
+// cspell:ignoreRegExp /rgb\("#?[A-Fa-f0-9]{6}"\)/
 
 /// The player colours from Super Smash Bros. Ultimate.
 ///
 /// @see https://www.deviantart.com/thewolfbunny64/art/Super-Smash-Bros-Every-Player-Color-is-Here-754697613
 #let smash-bros = (
-    rgb("ff3837"), // red
-    rgb("308aff"), // blue
-    rgb("ffbc16"), // yellow
-    rgb("29b548"), // green
-    rgb("fa8737"), // orange
-    rgb("2ed2eb"), // cyan
-    rgb("ff9db6"), // pink
-    rgb("9471ff"), // purple
+    rgb("#ff3837"), // red
+    rgb("#308aff"), // blue
+    rgb("#ffbc16"), // yellow
+    rgb("#29b548"), // green
+    rgb("#fa8737"), // orange
+    rgb("#2ed2eb"), // cyan
+    rgb("#ff9db6"), // pink
+    rgb("#9471ff"), // purple
 )
 
 /// Colours from the Notability app on iPad.
@@ -54,22 +54,22 @@
 
 /// Typst's built-in palette, just in case nay of its variable names get overwritten.
 #let typst = (
-    black: black,
-    gray: gray,
-    silver: silver,
-    white: white,
-    navy: navy,
-    blue: blue,
-    aqua: aqua,
-    teal: teal,
-    eastern: eastern,
-    purple: purple,
-    fuchsia: fuchsia,
-    maroon: maroon,
-    red: red,
-    orange: orange,
-    yellow: yellow,
-    olive: olive,
-    green: green,
-    lime: lime,
+    black: std.black,
+    gray: std.gray,
+    silver: std.silver,
+    white: std.white,
+    navy: std.navy,
+    blue: std.blue,
+    aqua: std.aqua,
+    teal: std.teal,
+    eastern: std.eastern,
+    purple: std.purple,
+    fuchsia: std.fuchsia,
+    maroon: std.maroon,
+    red: std.red,
+    orange: std.orange,
+    yellow: std.yellow,
+    olive: std.olive,
+    green: std.green,
+    lime: std.lime,
 )
