@@ -14,7 +14,17 @@
     rgb("#9471ff"), // purple
 )
 
-/// Colours from the Notability app on iPad.
+/// Colours picked from the Desmos graphing calculator.
+#let desmos = (
+  red: rgb("#c74440"),
+  blue: rgb("#2d70b3"),
+  green: rgb("#348543"),
+  orange: rgb("#fa7e19"),
+  purple: rgb("#6042a6"),
+  black: rgb("#000000"),
+)
+
+/// Colours picked from the Notability app on iPad.
 #let notability = (
     // First page
     yellow: rgb("#fefe00"),
@@ -52,7 +62,7 @@
     deep-lavender: rgb("#8e53d1"),
 )
 
-/// Typst's built-in palette, just in case nay of its variable names get overwritten.
+/// Typst's built-in palette, just in case any of its variable names are shadowed.
 #let typst = (
     black: std.black,
     gray: std.gray,
